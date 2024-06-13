@@ -19,9 +19,16 @@ age = st.text_input('Enter your age')
 
 # 按钮提交数据
 if st.button('Submit'):
-    c.execute("DELETE FROM pets  WHERE 種類 = ?, 編號 = ?", (name, age))
+    # 插入新数据
+    c.execute("INSERT INTO pets (種類, 編號) VALUES (?, ?)", (name, age))
     conn.commit()
     st.success('Data submitted successfully!')
+
+# 按钮删除数据
+if st.button('Delete'):
+    c.execute("DELETE FROM pets WHERE 種類 = ? AND 編號 = ?", (name, age))
+    conn.commit()
+    st.success('Data deleted successfully!')
 
 # 显示数据库中的数据
 st.write('Users in database:')
