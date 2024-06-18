@@ -1,7 +1,6 @@
-streamlit
-sqlite3
-gspread
-google-auth
-google-auth-oauthlib
-google-auth-httplib2
-PyDrive
+streamlit==1.12.0
+gspread==3.7.0
+google-auth==2.7.0
+google-auth-oauthlib==0.5.2
+google-auth-httplib2==0.1.0
+PyDrive==1.3.1
