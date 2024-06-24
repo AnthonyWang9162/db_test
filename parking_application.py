@@ -112,7 +112,15 @@ def main():
     st.warning("請確認填寫資料完全無誤後，再點擊'提交'")
 
     if st.button('提交'):
-        submit_application(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, previous1, previous2, current, local_db_path, db_file_id)
+         cursor.execute('''
+         SELECT 1 FROM 申請紀錄 WHERE 期別 = ? AND 姓名代號 = ?
+          ''', (current, employee_id))
+         existing_record = cursor.fetchone()
+
+         if existing_record:
+            st.error('您已經在本期提交過申請，請勿重複提交，如需修正申請資料請聯繫秘書處大樓管理組(分機:6395)!')
+         else:
+            submit_application(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, previous1, previous2, current, local_db_path, db_file_id)
     # 關閉cursor和連線
     cursor.close()
     conn.close()
