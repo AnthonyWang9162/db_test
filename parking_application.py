@@ -135,14 +135,14 @@ def submit_application(conn, cursor, unit, name, car_number, employee_id, specia
         if special_needs == '孕婦':
             status = get_pregnant_record_status(cursor, employee_id, previous1, previous2)  
             if status == 'none':
-                insert_apply(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, False)
+                insert_apply(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, False, local_db_path, db_file_id)
                 st.error('您為第一次孕婦申請，請將相關證明文件(如 :孕婦手冊、行照、駕照)電郵至example@taipower.com.tw')
             elif status == 'only_last_period':
                 if has_approved_car_record(cursor, employee_id, car_number):
-                    insert_apply(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, True)
+                    insert_apply(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, True, local_db_path, db_file_id)
                     st.success('本期"孕婦"身分停車申請成功')
                 else:
-                    insert_apply(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, False)
+                    insert_apply(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, False, local_db_path, db_file_id)
                     st.error('這輛車為第一次申請，請將相關證明文件電郵至example@taipower.com.tw')
             else:
                 st.error('您已經過了孕婦申請期限，請將特殊需求改成"一般"後重新申請')
@@ -151,13 +151,13 @@ def submit_application(conn, cursor, unit, name, car_number, employee_id, specia
             disable_data = cursor.fetchone()
             if disable_data:
                 if has_approved_car_record(cursor, employee_id, car_number):
-                    insert_apply(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, True)
+                    insert_apply(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, True, local_db_path, db_file_id)
                     st.success('本期"身心障礙"身分停車申請成功')
                 else:
-                    insert_apply(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, False)
+                    insert_apply(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, False, local_db_path, db_file_id)
                     st.error('這輛車為第一次申請，請將相關證明文件電郵至example@taipower.com.tw')
             else:
-                insert_apply(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, False)
+                insert_apply(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, False, local_db_path, db_file_id)
                 st.error('您為第一次身心障礙申請，請將相關證明文件(如 :身心障礙證明、行照、駕照)電郵至example@taipower.com.tw')
         else:
             cursor.execute("SELECT * FROM 繳費紀錄 WHERE 姓名代號 = ? AND 期別 = ?", (employee_id, previous1))
@@ -171,26 +171,26 @@ def submit_application(conn, cursor, unit, name, car_number, employee_id, specia
             else:
                 if check_user_eligibility(employee_id, conn, cursor, previous1, previous2):
                     if has_approved_car_record(cursor, employee_id, car_number):
-                        insert_apply(conn, cursor, unit, name, car_number, employee_id, '保障', contact_info, True)
+                        insert_apply(conn, cursor, unit, name, car_number, employee_id, '保障', contact_info, True, local_db_path, db_file_id)
                         st.success('由於您前兩期申請停車都未抽籤，本期獲得保障資格!')
                     else:
-                        insert_apply(conn, cursor, unit, name, car_number, employee_id, '保障', contact_info, False)
+                        insert_apply(conn, cursor, unit, name, car_number, employee_id, '保障', contact_info, False, local_db_path, db_file_id)
                         st.error('本期獲得保障資格，但是此車輛為第一次申請，請將相關證明文件電郵至example@taipower.com.tw!')
                 else:
                     status = get_pregnant_record_status(cursor, employee_id, previous1, previous2)  
                     if status == 'only_last_period':
                         if has_approved_car_record(cursor, employee_id, car_number):
-                            insert_apply(conn, cursor, unit, name, car_number, employee_id, '孕婦', contact_info, True)
+                            insert_apply(conn, cursor, unit, name, car_number, employee_id, '孕婦', contact_info, True, local_db_path, db_file_id)
                             st.success('由於您上期申請孕婦資格成功，本期將自動替換為孕婦身分申請!')
                         else:
-                            insert_apply(conn, cursor, unit, name, car_number, employee_id, '孕婦', contact_info, False)
+                            insert_apply(conn, cursor, unit, name, car_number, employee_id, '孕婦', contact_info, False, local_db_path, db_file_id)
                             st.error('由於您上期已通過孕婦資格申請，這期申請身分資格已改為"孕婦"，另請附車輛證明文件電郵至example@taipower.com.tw')
                     else:
                         if has_approved_car_record(cursor, employee_id, car_number):
-                            insert_apply(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, True)
+                            insert_apply(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, True, local_db_path, db_file_id)
                             st.success('本期一般車位申請成功!')
                         else:
-                            insert_apply(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, False)
+                            insert_apply(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, False, local_db_path, db_file_id)
                             st.error('此輛車為第一次申請，請將相關證明文件寄送至example@taipower.com.tw')
 
 # 將填寫的資料插入到資料庫
