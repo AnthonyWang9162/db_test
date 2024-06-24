@@ -7,6 +7,8 @@ from googleapiclient.http import MediaIoBaseDownload, MediaFileUpload
 import io
 import re
 from datetime import datetime
+import threading
+lock = threading.Lock()
 # 设置 Google Drive API 凭据
 creds = Credentials.from_service_account_info(st.secrets["google_drive"])
 
@@ -211,7 +213,8 @@ def insert_apply(conn, cursor, unit, name, car_number, employee_id, special_need
         VALUES (?,?,?,?,?,?,?,?,?)
         ''', (current_date, current, employee_id, name, unit, car_number, contact_info, special_needs, car_bind))
         conn.commit()
-        upload_db(local_db_path, db_file_id)
+        with lock:
+            upload_db(local_db_path, db_file_id)
 
 def check_user_eligibility(employee_id, conn, cursor,previous1,previous2):
     # 檢查申請紀錄表中是否有前二期別的紀錄
