@@ -118,14 +118,14 @@ def main():
         if repeat_application:
             cursor.execute("DELETE FROM 申請紀錄 WHERE 姓名代號 = ? AND 期別 = ?",(employee_id, current))
             upload_db(local_db_path, db_file_id)
-            submit_application(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info,previous1,previous2)# 請替換成上期及上上期期別
+            submit_application(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, previous1, previous2, local_db_path, db_file_id)
         else:           
-            submit_application(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info,previous1,previous2)# 請替換成上期及上上期期別
+            submit_application(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, previous1, previous2, local_db_path, db_file_id)
     # 關閉cursor和連線
     cursor.close()
     conn.close()
 
-def submit_application(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, previous1, previous2):
+def submit_application(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, previous1, previous2, local_db_path, db_file_id):
     # 檢查表單是否填寫完整
     if not unit or not name or not car_number or not employee_id or not special_needs or not contact_info:
         st.error('請填寫完整表單！')
@@ -194,7 +194,7 @@ def submit_application(conn, cursor, unit, name, car_number, employee_id, specia
                             st.error('此輛車為第一次申請，請將相關證明文件寄送至example@taipower.com.tw')
 
 # 將填寫的資料插入到資料庫
-def insert_apply(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, car_bind):
+def insert_apply(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, approved, local_db_path, db_file_id):
     # 檢查是否已經存在相同的 (期別, 姓名代號) 記錄
     cursor.execute('''
     SELECT 1 FROM 申請紀錄 WHERE 期別 = ? AND 姓名代號 = ?
