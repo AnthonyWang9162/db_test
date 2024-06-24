@@ -187,15 +187,10 @@ def submit_application(conn, cursor, unit, name, car_number, employee_id, specia
 
 # 將填寫的資料插入到資料庫
 def insert_apply(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, car_bind, current, local_db_path, db_file_id):
-    # 檢查是否已經存在相同的 (期別, 姓名代號) 記錄
-    cursor.execute('''
-    SELECT 1 FROM 申請紀錄 WHERE 期別 = ? AND 姓名代號 = ?
-    ''', (current, employee_id))
-    existing_record = cursor.fetchone()
-
-    if existing_record:
-        st.error('您已經在本期提交過申請，請勿重複提交，，如需修正申請資料請聯繫秘書處大樓管理組(分機:6395)!')
-    else:
+    try:
+        conn.execute("BEGIN TRANSACTION")
+        # 在這裡執行資料庫操作
+        # 確認要插入的資料是否存在，不存在插入
         # 獲取當前日期
         current_date = datetime.now().strftime('%Y-%m-%d')
         cursor.execute('''
@@ -204,6 +199,13 @@ def insert_apply(conn, cursor, unit, name, car_number, employee_id, special_need
         ''', (current_date, current, employee_id, name, unit, car_number, contact_info, special_needs, car_bind))
         conn.commit()
         upload_db(local_db_path, db_file_id)
+        st.success('申請成功')
+    except sqlite3.Error as e:
+        conn.rollback()
+        st.error('資料庫錯誤: {}'.format(e))
+    finally:
+        cursor.close()
+        conn.close()
 
 def check_user_eligibility(employee_id, conn, cursor,previous1,previous2):
     # 檢查申請紀錄表中是否有前二期別的紀錄
