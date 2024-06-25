@@ -8,6 +8,7 @@ import io
 import re
 from datetime import datetime
 from filelock import FileLock
+import time
 # 设置 Google Drive API 凭据
 creds = Credentials.from_service_account_info(st.secrets["google_drive"])
 
@@ -66,6 +67,7 @@ def perform_operation(conn, cursor, unit, name, car_number, employee_id, special
     lock = FileLock(lockfile_path)
     try:
         lock.acquire(timeout=1)
+        time.sleep(3)
         submit_application(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, previous1, previous2, current, local_db_path, db_file_id)
 
         return True
