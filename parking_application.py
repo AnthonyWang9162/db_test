@@ -216,6 +216,7 @@ def insert_apply(conn, cursor, unit, name, car_number, employee_id, special_need
 
     if existing_record:
         st.error('您已經在本期提交過申請，請勿重複提交，，如需修正申請資料請聯繫秘書處大樓管理組(分機:6395)!')
+        break
     else:
         # 獲取當前日期
         current_date = datetime.now().strftime('%Y-%m-%d')
