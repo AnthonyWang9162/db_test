@@ -73,7 +73,7 @@ def perform_operation(conn, cursor, unit, name, car_number, employee_id, special
 
         return True
     except TimeoutError:
-        st.warning("有操作正在進行，請稍後再試。")
+        st.warning("有操作正在進行，請稍後再試，或聯絡秘書處大樓管理組(6395)。")
         return False
     finally:
         if lock.is_locked:
@@ -204,7 +204,7 @@ def submit_application(conn, cursor, unit, name, car_number, employee_id, specia
                                 insert_apply(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, False , current,local_db_path, db_file_id)
                                 st.error('此輛車為第一次申請，請將相關證明文件寄送至example@taipower.com.tw')
     except:
-        st.warning("有操作正在進行，請稍後再試。")
+        st.warning("有操作正在進行，請稍後再試，或聯絡秘書處大樓管理組(6395)。")
 
 # 將填寫的資料插入到資料庫
 def insert_apply(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, car_bind, current, local_db_path, db_file_id):
