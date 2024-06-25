@@ -67,6 +67,7 @@ def perform_operation(conn, cursor, unit, name, car_number, employee_id, special
     lock = FileLock(lockfile_path)
     try:
         lock.acquire(timeout=1)
+        st.write("資料驗證判斷中，請稍後!")
         time.sleep(3)
         submit_application(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, previous1, previous2, current, local_db_path, db_file_id)
 
