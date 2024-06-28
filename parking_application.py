@@ -156,7 +156,7 @@ def main():
     special_needs = st.selectbox('(5)請問是否有特殊需求？', ['一般', '孕婦', '身心障礙'])
 
     # 6. 公務聯絡方式
-    contact_info = st.text_input('(7)請問您的公務聯絡方式?')
+    contact_info = st.text_input('(6)請問您的公務聯絡方式?')
     
     st.warning("請確認填寫資料完全無誤後，再點擊'提交'")
 
