@@ -121,7 +121,7 @@ def main():
     previous1, previous2 = previous_quarters(Taiwan_year, quarter)
     st.title('停車抽籤申請表單')
     # Google Drive 文件 ID（你需要手动获取）
-    db_file_id = '1uNS1hhdKYjdTf3PQWyQNy_AS_F_GQ7RI'
+    db_file_id = '1_TArAUZyzzZuLX3y320VpytfBlaoUGBB'
     local_db_path = '/tmp/test.db'
 
     # 下载数据库文件到本地
