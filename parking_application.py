@@ -291,17 +291,6 @@ def insert_apply(conn, cursor, unit, name, car_number, employee_id, special_need
     upload_db(local_db_path, db_file_id)
 
 def check_user_eligibility(employee_id, conn, cursor,previous1,previous2):
-    # 檢查申請紀錄表中是否有前二期別的紀錄
-    cursor.execute('''
-        SELECT COUNT(*)
-        FROM 申請紀錄
-        WHERE 姓名代號 = ? AND 期別 IN (?,?)
-    ''', (employee_id,previous1,previous2))
-    application_periods_count = cursor.fetchone()[0]
-
-    if application_periods_count < 2:
-        return False
-
     # 檢查抽籤繳費表中前二期別的紀錄繳費狀態是否為未繳費
     cursor.execute('''
         SELECT COUNT(*)
