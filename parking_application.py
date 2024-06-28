@@ -121,7 +121,7 @@ def main():
     previous1, previous2 = previous_quarters(Taiwan_year, quarter)
     st.title('停車抽籤申請表單')
     # Google Drive 文件 ID（你需要手动获取）
-    db_file_id = '1F0fXjhugJRGLMH4B9NLyGsMXLcqdFOvC'
+    db_file_id = '1uNS1hhdKYjdTf3PQWyQNy_AS_F_GQ7RI'
     local_db_path = '/tmp/test.db'
 
     # 下载数据库文件到本地
@@ -179,8 +179,6 @@ def submit_application(conn, cursor, unit, name, car_number, employee_id, specia
                 if status == 'none':
                     insert_apply(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, False, current, local_db_path, db_file_id)
                     st.error('您為第一次孕婦申請，請將相關證明文件(如 :孕婦手冊、行照、駕照)電郵至example@taipower.com.tw')
-                    a = type(previous1)
-                    st.success(f"{a}")
                     text = "您為第一次孕婦申請，請將相關證明文件(如 :孕婦手冊、行照、駕照)電郵回覆。"
                     subject_text = "本期停車補證明文件通知"
                     send_email(employee_id, name, text, subject_text)  
