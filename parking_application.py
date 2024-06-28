@@ -174,7 +174,13 @@ def submit_application(conn, cursor, unit, name, car_number, employee_id, specia
         elif not re.match(r'^[A-Z0-9]+$', car_number):
             st.error('您填寫的車號欄位有誤，請重新填寫')
         else:
-            if special_needs == '孕婦':
+            cursor.execute('''
+            SELECT 1 FROM 申請紀錄 WHERE 期別 = ? AND 姓名代號 = ?
+            ''', (current, employee_id))
+            existing_record = cursor.fetchone()
+            if existing_record:
+                st.error('您已經在本期提交過申請，請勿重複提交，，如需修正申請資料請聯繫秘書處大樓管理組(分機:6395)!')
+            elif special_needs == '孕婦':
                 status = get_pregnant_record_status(cursor, employee_id, previous1, previous2)  
                 if status == 'none':
                     insert_apply(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, False, current, local_db_path, db_file_id)
@@ -275,23 +281,14 @@ def submit_application(conn, cursor, unit, name, car_number, employee_id, specia
 
 # 將填寫的資料插入到資料庫
 def insert_apply(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, car_bind, current, local_db_path, db_file_id):
-    # 檢查是否已經存在相同的 (期別, 姓名代號) 記錄
+    # 獲取當前日期
+    current_date = datetime.now().strftime('%Y-%m-%d')
     cursor.execute('''
-    SELECT 1 FROM 申請紀錄 WHERE 期別 = ? AND 姓名代號 = ?
-    ''', (current, employee_id))
-    existing_record = cursor.fetchone()
-
-    if existing_record:
-        st.error('您已經在本期提交過申請，請勿重複提交，，如需修正申請資料請聯繫秘書處大樓管理組(分機:6395)!')
-    else:
-        # 獲取當前日期
-        current_date = datetime.now().strftime('%Y-%m-%d')
-        cursor.execute('''
-        INSERT INTO 申請紀錄 (日期,期別,姓名代號,姓名,單位,車牌號碼,聯絡電話,身分註記,車牌綁定)
-        VALUES (?,?,?,?,?,?,?,?,?)
-        ''', (current_date, current, employee_id, name, unit, car_number, contact_info, special_needs, car_bind))
-        conn.commit()
-        upload_db(local_db_path, db_file_id)
+    INSERT INTO 申請紀錄 (日期,期別,姓名代號,姓名,單位,車牌號碼,聯絡電話,身分註記,車牌綁定)
+    VALUES (?,?,?,?,?,?,?,?,?)
+    ''', (current_date, current, employee_id, name, unit, car_number, contact_info, special_needs, car_bind))
+    conn.commit()
+    upload_db(local_db_path, db_file_id)
 
 def check_user_eligibility(employee_id, conn, cursor,previous1,previous2):
     # 檢查申請紀錄表中是否有前二期別的紀錄
