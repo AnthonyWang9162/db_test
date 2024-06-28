@@ -9,6 +9,9 @@ import re
 from datetime import datetime
 from filelock import FileLock
 import time
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 # 设置 Google Drive API 凭据
 creds = Credentials.from_service_account_info(st.secrets["google_drive"])
 
@@ -78,6 +81,34 @@ def perform_operation(conn, cursor, unit, name, car_number, employee_id, special
     finally:
         if lock.is_locked:
             lock.release()
+# 函數來發送電子郵件
+def send_email(employee_id, name, text):
+    sender_email = os.getenv("EMAIL_USER")
+    sender_password = os.getenv("EMAIL_PASS")
+    smtp_server = "smtp.gmail.com"
+    smtp_port = 465
+
+    subject = "填寫表單通知"
+    body = f"{name}您好,\n{text}\n秘書處大樓管理組敬上\n聯絡電話:(02)2366-6395"
+
+    # 建立 MIMEText 物件
+    message = MIMEMultipart()
+    message["From"] = sender_email
+    message["To"] = f"u{employee_id}@taipower.com.tw"
+    message["Subject"] = subject
+
+    # 附加郵件內容
+    message.attach(MIMEText(body, "plain"))
+
+    # 使用 smtplib 發送郵件
+    try:
+        server = smtplib.SMTP_SSL(smtp_server, smtp_port)
+        server.login(sender_email, sender_password)
+        server.sendmail(sender_email,f"u{employee_id}@taipower.com.tw",message.as_string())
+        server.close()
+        return "郵件已發送成功！"
+    except Exception as e:
+        return f"發送郵件時發生錯誤: {e}"
 
 # 建立Streamlit表單
 def main():
@@ -203,6 +234,8 @@ def submit_application(conn, cursor, unit, name, car_number, employee_id, specia
                             else:
                                 insert_apply(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, False , current,local_db_path, db_file_id)
                                 st.error('此輛車為第一次申請，請將相關證明文件寄送至example@taipower.com.tw')
+                                text = "您為第一次申請停車位，請將相關證明文件電郵回覆。"
+                                send_email(employee_id, name, text)
     except:
         st.warning("有操作正在進行，請稍後再試，或聯絡秘書處大樓管理組(6395)。")
 
