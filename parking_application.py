@@ -82,14 +82,14 @@ def perform_operation(conn, cursor, unit, name, car_number, employee_id, special
         if lock.is_locked:
             lock.release()
 # 函數來發送電子郵件
-def send_email(employee_id, name, text):
+def send_email(employee_id, name, text, subject_text):
     sender_email = os.getenv("EMAIL_USER")
     sender_password = os.getenv("EMAIL_PASS")
     smtp_server = "smtp.gmail.com"
     smtp_port = 465
 
-    subject = "填寫表單通知"
-    body = f"{name}您好,\n{text}\n秘書處大樓管理組敬上\n聯絡電話:(02)2366-6395"
+    subject = subject_text
+    body = f"{name}您好,\n{text}\n秘書處 大樓管理組 敬上\n聯絡電話:(02)2366-6395"
 
     # 建立 MIMEText 物件
     message = MIMEMultipart()
@@ -235,7 +235,8 @@ def submit_application(conn, cursor, unit, name, car_number, employee_id, specia
                                 insert_apply(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, False , current,local_db_path, db_file_id)
                                 st.error('此輛車為第一次申請，請將相關證明文件寄送至example@taipower.com.tw')
                                 text = "您為第一次申請停車位，請將相關證明文件電郵回覆。"
-                                send_email(employee_id, name, text)
+                                subject_text = "停車抽籤申請補證明文件通知"
+                                send_email(employee_id, name, text, subject_text)
     except:
         st.warning("有操作正在進行，請稍後再試，或聯絡秘書處大樓管理組(6395)。")
 
