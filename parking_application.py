@@ -179,7 +179,8 @@ def submit_application(conn, cursor, unit, name, car_number, employee_id, specia
                 if status == 'none':
                     insert_apply(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, False, current, local_db_path, db_file_id)
                     st.error('您為第一次孕婦申請，請將相關證明文件(如 :孕婦手冊、行照、駕照)電郵至example@taipower.com.tw')
-                    st.success(f"{previous1}{previous2}")
+                    a = type(previous1)
+                    st.success(f"{a}")
                     text = "您為第一次孕婦申請，請將相關證明文件(如 :孕婦手冊、行照、駕照)電郵回覆。"
                     subject_text = "本期停車補證明文件通知"
                     send_email(employee_id, name, text, subject_text)  
