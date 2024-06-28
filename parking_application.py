@@ -174,7 +174,13 @@ def submit_application(conn, cursor, unit, name, car_number, employee_id, specia
         elif not re.match(r'^[A-Z0-9]+$', car_number):
             st.error('您填寫的車號欄位有誤，請重新填寫')
         else:
-            if special_needs == '孕婦':
+            cursor.execute('''
+            SELECT 1 FROM 申請紀錄 WHERE 期別 = ? AND 姓名代號 = ?
+            ''', (current, employee_id))
+            existing_record = cursor.fetchone()
+            if existing_record:
+                st.error('您已經在本期提交過申請，請勿重複提交，，如需修正申請資料請聯繫秘書處大樓管理組(分機:6395)!')
+            elif special_needs == '孕婦':
                 status = get_pregnant_record_status(cursor, employee_id, previous1, previous2)  
                 if status == 'none':
                     insert_apply(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, False, current, local_db_path, db_file_id)
