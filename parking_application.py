@@ -179,7 +179,7 @@ def submit_application(conn, cursor, unit, name, car_number, employee_id, specia
             ''', (current, employee_id))
             existing_record = cursor.fetchone()
             if existing_record:
-                st.error('您已經在本期提交過申請，請勿重複提交，，如需修正申請資料請聯繫秘書處大樓管理組(分機:6395)!')
+                st.error('您已經在本期提交過申請，請勿重複提交，如需修正申請資料請聯繫秘書處大樓管理組(分機:6395)!')
             elif special_needs == '孕婦':
                 status = get_pregnant_record_status(cursor, employee_id, previous1, previous2)  
                 if status == 'none':
