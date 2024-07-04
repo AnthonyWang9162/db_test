@@ -353,5 +353,3 @@ def get_pregnant_record_status(cursor, employee_id,last_period,before_last_perio
 
 if __name__ == '__main__':
     main()
-if __name__ == '__main__':
-    main()
