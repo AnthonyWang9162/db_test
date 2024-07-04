@@ -202,7 +202,18 @@ def submit_application(conn, cursor, unit, name, car_number, employee_id, specia
                         subject_text = "本期停車補證明文件通知"
                         send_email(employee_id, name, text, subject_text)
                 else:
-                    st.error('您已經過了孕婦申請期限，請將特殊需求改成"一般"後重新申請')
+                    if has_approved_car_record(cursor, employee_id, car_number):
+                        insert_apply(conn, cursor, unit, name, car_number, employee_id, '一般', contact_info, True, current, local_db_path, db_file_id)
+                        st.success('您已經過了孕婦申請期限，系統自動將您轉為一般身分申請本期停車成功。')
+                        text = "您已經過了孕婦申請期限，系統自動將您轉為一般停車申請停車抽籤，感謝您。"
+                        subject_text = "本期停車申請成功通知"
+                        send_email(employee_id, name, text, subject_text)
+                    else:
+                        insert_apply(conn, cursor, unit, name, car_number, employee_id, '一般', contact_info, False, current, local_db_path, db_file_id)
+                        st.error('您已經過了孕婦申請期限，系統自動將您轉為一般身分申請本期停車，並且這輛車為第一次申請，請將相關證明文件電郵至example@taipower.com.tw')
+                        text = "您已經過了孕婦申請期限，系統自動將您轉為一般停車申請停車抽籤，但是該車為第一次申請停車，請補相關證明文件電郵回覆。"
+                        subject_text = "本期停車補證明文件通知"
+                        send_email(employee_id, name, text, subject_text)                       
             elif special_needs == '身心障礙':
                 cursor.execute("SELECT * FROM 申請紀錄 WHERE 姓名代號 = ? AND 身分註記 = ?", (employee_id, '身心障礙'))
                 disable_data = cursor.fetchone()
