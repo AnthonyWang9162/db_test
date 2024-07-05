@@ -9,11 +9,11 @@ data = {
 }
 df = pd.DataFrame(data)
 
-# 使用st.data_editor顯示和編輯資料
+# 使用st.experimental_data_editor顯示和編輯資料
 st.title('Data Editor Example')
 st.write('Use the data editor to view and edit the data.')
 
-edited_df = st.data_editor(df)
+edited_df = st.experimental_data_editor(df)
 
 # 顯示編輯後的資料
 st.write('Edited Data:')
