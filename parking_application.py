@@ -130,39 +130,24 @@ def main():
     conn = sqlite3.connect(local_db_path)
     cursor = conn.cursor()
 
-    # 1. 單位
-    unit = st.selectbox('(1)請問您所屬單位?', ['秘書處', '公眾服務處'])
-
-    # 2. 大名
-    name = st.text_input('(2)請問您的大名?')
-
-    # 3. 愛車車號
-    st.write('(3)請問您的愛車車號?')
-    col1, col2, col3 = st.columns([1, 0.1, 1])
-    with col1:
+    with st.form(key='application_form'):
+        unit = st.selectbox('(1)請問您所屬單位?', ['秘書處', '公眾服務處'])
+        name = st.text_input('(2)請問您的大名?')
         car_number_prefix = st.text_input('前半段').upper()
-    with col2:
-        st.markdown('<h1 style="text-align: center;">-</h1>', unsafe_allow_html=True)
-    with col3:
         car_number_suffix = st.text_input('後半段').upper()
+        car_number = car_number_prefix + car_number_suffix
+        employee_id = st.text_input('(4)請問您的員工編號?')
+        special_needs = st.selectbox('(5)請問是否有特殊需求？', ['一般', '孕婦', '身心障礙'])
+        contact_info = st.text_input('(6)請問您的公務聯絡方式?')
 
-    car_number = car_number_prefix +car_number_suffix  # 合併車號
+        st.warning("請確認填寫資料完全無誤後，再點擊'提交'")
 
-    # 4. 員工編號
-    employee_id = st.text_input('(4)請問您的員工編號?')  
+        submit_button = st.form_submit_button(label='提交')
 
-    # 5. 特殊需求
-    special_needs = st.selectbox('(5)請問是否有特殊需求？', ['一般', '孕婦', '身心障礙'])
-
-    # 6. 公務聯絡方式
-    contact_info = st.text_input('(6)請問您的公務聯絡方式?')
-    
-    st.warning("請確認填寫資料完全無誤後，再點擊'提交'")
-
-    if st.button('提交'):
-        st.write("資料驗證判斷中，請稍後!")
-        perform_operation(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, previous1, previous2, current, local_db_path, db_file_id)
-    # 關閉cursor和連線
+        if submit_button:
+            st.write("資料驗證判斷中，請稍後!")
+            with st.spinner('提交中，請稍候...'):
+                perform_operation(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, previous1, previous2, current, local_db_path, db_file_id)
     cursor.close()
     conn.close()
 
