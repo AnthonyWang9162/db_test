@@ -136,17 +136,14 @@ def main():
         car_number_prefix = st.text_input('(3-1)請問您的車牌號碼前半段("-"前)').upper()
         car_number_suffix = st.text_input('(3-2)請問您的車牌號碼後半段("-"後)').upper()
         car_number = car_number_prefix + car_number_suffix
-        employee_id = st.text_input('(4)請問您的員工編號?')
+        employee_id = st.text_input('(4)請問您的員工編號?(不+U)')
         special_needs = st.selectbox('(5)請問是否有特殊需求？', ['一般', '孕婦', '身心障礙'])
         contact_info = st.text_input('(6)請問您的公務聯絡方式?')
-
         st.warning("請確認填寫資料完全無誤後，再點擊'提交'")
-
         submit_button = st.form_submit_button(label='提交')
 
         if submit_button:
-            st.write("資料驗證判斷中，請稍後!")
-            with st.spinner('提交中，請稍候...'):
+            with st.spinner('資料驗證中，請稍候...'):
                 perform_operation(conn, cursor, unit, name, car_number, employee_id, special_needs, contact_info, previous1, previous2, current, local_db_path, db_file_id)
     cursor.close()
     conn.close()
@@ -157,7 +154,9 @@ def submit_application(conn, cursor, unit, name, car_number, employee_id, specia
         if not unit or not name or not car_number or not employee_id or not special_needs or not contact_info:
             st.error('請填寫完整表單！')
         elif not re.match(r'^[A-Z0-9]+$', car_number):
-            st.error('您填寫的車號欄位有誤，請重新填寫')
+            st.error('您填寫的車號欄位有誤，請調整後重新提交表單')
+        elif not re.match(r'^[0-9]+$', employee_id):
+            st.error('您填寫的員工編號有+U，請調整後重新提交表單')
         else:
             cursor.execute('''
             SELECT 1 FROM 申請紀錄 WHERE 期別 = ? AND 姓名代號 = ?
