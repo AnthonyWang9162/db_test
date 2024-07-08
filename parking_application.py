@@ -133,8 +133,8 @@ def main():
     with st.form(key='application_form'):
         unit = st.selectbox('(1)請問您所屬單位?', ['秘書處', '公眾服務處'])
         name = st.text_input('(2)請問您的大名?')
-        car_number_prefix = st.text_input('前半段').upper()
-        car_number_suffix = st.text_input('後半段').upper()
+        car_number_prefix = st.text_input('前半段').strip().upper()
+        car_number_suffix = st.text_input('後半段').strip().upper()
         car_number = car_number_prefix + car_number_suffix
         employee_id = st.text_input('(4)請問您的員工編號?')
         special_needs = st.selectbox('(5)請問是否有特殊需求？', ['一般', '孕婦', '身心障礙'])
