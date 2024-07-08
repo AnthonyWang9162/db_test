@@ -21,7 +21,6 @@ service = build('drive', 'v3', credentials=creds)
 lockfile_path = "/tmp/operation.lock"
 # 下载和上传 SQLite 数据库文件的函数
 
-@st.cache_resource(ttl=600, show_spinner="正在加載資料...")  
 def download_db(file_id, destination):
     request = service.files().get_media(fileId=file_id)
     fh = io.FileIO(destination, 'wb')
