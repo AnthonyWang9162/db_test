@@ -111,6 +111,7 @@ def send_email(employee_id, name, text, subject_text):
 
 # 建立Streamlit表單
 def main():
+    st.set_page_config( page_title="停車申請管理系統")
     # 獲取今天的日期
     today = datetime.today()
     year, quarter = get_quarter(today.year, today.month)
